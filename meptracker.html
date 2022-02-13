@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>meptracker package &mdash; meptracker 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> meptracker
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">meptracker package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-meptracker.tracker">meptracker.tracker module</a></li>
+<li><a class="reference internal" href="#module-meptracker">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">meptracker</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>meptracker package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/meptracker.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="meptracker-package">
+<h1>meptracker package<a class="headerlink" href="#meptracker-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-meptracker.tracker">
+<span id="meptracker-tracker-module"></span><h2>meptracker.tracker module<a class="headerlink" href="#module-meptracker.tracker" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="meptracker.tracker.Tracker">
+<em class="property">class </em><code class="descclassname">meptracker.tracker.</code><code class="descname">Tracker</code><span class="sig-paren">(</span><em>scanfunc</em>, <em>dim</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/meptracker/tracker.html#Tracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#meptracker.tracker.Tracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to track and find optimal Motor-Evoked Potentials (MEPs).</p>
+<p>The tracking process seeks to determine a path to the optimal MEP by sampling the
+MEP function along a 2D or 3D space.</p>
+<p>See the Notes for more information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>scanfunc</strong> (<em>callable</em>) – <p>MEP probe function with signature <cite>scanfunc(x)</cite>, where <cite>x</cite> is the position vector.
+It should return the MEP value probed at a specific location of a n-dimensional
+space. The input argument has the form:</p>
+<ul class="simple">
+<li><cite>x</cite> : <cite>list</cite> [ <cite>float</cite> ], (n,).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The search process is performed through the <cite>track</cite> method, which seeks to find
+the point of maximum MEP by taken successive probes of scanfunc. An initial guess (x0)
+at the solution vector should be provided. The list of arguments passed to the
+optimization routine depends on the solution method. Currently, the interface to the
+Simplex Vertex-Edge method (SVE) is implemented.</p>
+<dl class="method">
+<dt id="meptracker.tracker.Tracker.track">
+<code class="descname">track</code><span class="sig-paren">(</span><em>x0</em>, <em>method</em>, <em>map2d=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/meptracker/tracker.html#Tracker.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#meptracker.tracker.Tracker.track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an optimal (maximum) MEP by probing a MEP function
+through an optimal 2D or 3D path. An initial guess is required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x0</strong> (<cite>list</cite> [ <cite>float</cite> ]) – Initial guess at the n-dimensional solution vector.</li>
+<li><strong>method</strong> (<em>{'sve'}</em>) – Optimization method.</li>
+<li><strong>map2d</strong> (<cite>bool</cite>, default False) – If <cite>True</cite>, maps the 3D position vector into a 2D space using a
+polar/zenithal projection. The optimization process then proceeds
+along a bi-dimensional space.</li>
+<li><strong>**kwargs</strong> – Additional keyword arguments passed to the solution method.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Output data from the optimization method.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>dict</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-meptracker">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-meptracker" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Eduardo Werley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

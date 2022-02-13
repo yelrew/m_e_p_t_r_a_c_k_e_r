@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>meptracker.tests.test_tracker_offline_scanfunc &mdash; meptracker 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> meptracker
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">meptracker</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>meptracker.tests.test_tracker_offline_scanfunc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for meptracker.tests.test_tracker_offline_scanfunc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">scanfunc</span>
+
+<span class="sd">Sample MEP amplitude function for the test &#39;test_tracker_offline&#39;</span>
+
+<span class="sd">This function is a 5th-degree polynomial in three variables previously fitted to</span>
+<span class="sd">the data of file &#39;07_120_MRI_FCP_processed_scanner.csv&#39;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="scanfunc"><a class="viewcode-back" href="../../../meptracker.tests.html#meptracker.tests.test_tracker_offline_scanfunc.scanfunc">[docs]</a><span class="k">def</span> <span class="nf">scanfunc</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+	<span class="n">k</span> <span class="o">=</span> <span class="mi">5</span>
+	<span class="n">coefs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.12895532e+06</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.39363608e+06</span><span class="p">,</span>  <span class="mf">3.77696354e+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.94415470e+02</span><span class="p">,</span>\
+			 <span class="mf">1.79256650e+00</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.94590544e-03</span><span class="p">,</span>  <span class="mf">3.04490840e+06</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.87012081e+05</span><span class="p">,</span>\
+			 <span class="mf">3.16041147e+03</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.10121571e+01</span><span class="p">,</span>  <span class="mf">4.90677522e-02</span><span class="p">,</span>  <span class="mf">1.16921229e+05</span><span class="p">,</span>\
+			<span class="o">-</span><span class="mf">2.19064587e+03</span><span class="p">,</span>  <span class="mf">1.31560575e+01</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.47985734e-02</span><span class="p">,</span>  <span class="mf">5.46612602e+02</span><span class="p">,</span>\
+			<span class="o">-</span><span class="mf">7.94901887e+00</span><span class="p">,</span>  <span class="mf">2.91365320e-02</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.06534946e-01</span><span class="p">,</span>  <span class="mf">4.72424075e-03</span><span class="p">,</span>\
+			 <span class="mf">1.05083889e-03</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.54125469e+03</span><span class="p">,</span>  <span class="mf">1.83318755e+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.79147215e+02</span><span class="p">,</span>\
+			 <span class="mf">1.34666009e+00</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.99507486e-03</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.36929129e+05</span><span class="p">,</span>  <span class="mf">1.65810816e+03</span><span class="p">,</span>\
+			<span class="o">-</span><span class="mf">2.13571886e+00</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.97104596e-02</span><span class="p">,</span>  <span class="mf">2.42493956e+03</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.22789916e+01</span><span class="p">,</span>\
+			 <span class="mf">1.05677169e-01</span><span class="p">,</span>  <span class="mf">5.25775660e+00</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.71832963e-02</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.30301841e-03</span><span class="p">,</span>\
+			 <span class="mf">6.04697512e+04</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.61066797e+02</span><span class="p">,</span>  <span class="mf">1.26549873e+00</span><span class="p">,</span>  <span class="mf">3.27504633e-03</span><span class="p">,</span>\
+			<span class="o">-</span><span class="mf">2.45441084e+03</span><span class="p">,</span>  <span class="mf">2.93368825e+01</span><span class="p">,</span> <span class="o">-</span><span class="mf">8.36134747e-02</span><span class="p">,</span>  <span class="mf">1.49728139e+01</span><span class="p">,</span>\
+			<span class="o">-</span><span class="mf">1.02938837e-01</span><span class="p">,</span>  <span class="mf">1.35541533e-02</span><span class="p">,</span>  <span class="mf">1.04787100e+03</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.04123302e+01</span><span class="p">,</span>\
+			 <span class="mf">2.41043402e-02</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.30352384e+01</span><span class="p">,</span>  <span class="mf">8.36435663e-02</span><span class="p">,</span>  <span class="mf">2.89171791e-02</span><span class="p">,</span>\
+			 <span class="mf">6.00206502e+00</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.25615235e-02</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.29786403e-02</span><span class="p">,</span>  <span class="mf">1.15563280e-02</span><span class="p">]</span>
+
+	<span class="n">D</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="mf">0.</span>
+	<span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="o">-</span><span class="n">i</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="o">-</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)):</span>
+				<span class="n">px</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="n">i</span>
+				<span class="n">py</span> <span class="o">=</span> <span class="n">y</span><span class="o">**</span><span class="n">j</span>
+				<span class="n">pz</span> <span class="o">=</span> <span class="n">z</span><span class="o">**</span><span class="n">k</span>
+				<span class="n">f</span> <span class="o">+=</span> <span class="n">coefs</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">*</span> <span class="n">px</span> <span class="o">*</span> <span class="n">py</span> <span class="o">*</span> <span class="n">pz</span>
+				<span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>	</div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Eduardo Werley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

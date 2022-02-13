@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>meptracker.tracker &mdash; meptracker 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> meptracker
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">meptracker</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>meptracker.tracker</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for meptracker.tracker</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="Tracker"><a class="viewcode-back" href="../../meptracker.html#meptracker.tracker.Tracker">[docs]</a><span class="k">class</span> <span class="nc">Tracker</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to track and find optimal Motor-Evoked Potentials (MEPs).</span>
+<span class="sd">    </span>
+<span class="sd">    The tracking process seeks to determine a path to the optimal MEP by sampling the</span>
+<span class="sd">    MEP function along a 2D or 3D space.</span>
+<span class="sd">    </span>
+<span class="sd">    See the Notes for more information.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scanfunc : callable</span>
+<span class="sd">        MEP probe function with signature `scanfunc(x)`, where `x` is the position vector.</span>
+<span class="sd">        It should return the MEP value probed at a specific location of a n-dimensional </span>
+<span class="sd">        space. The input argument has the form:</span>
+
+<span class="sd">        - `x` : `list` [ `float` ], (n,).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The search process is performed through the `track` method, which seeks to find </span>
+<span class="sd">    the point of maximum MEP by taken successive probes of scanfunc. An initial guess (x0) </span>
+<span class="sd">    at the solution vector should be provided. The list of arguments passed to the </span>
+<span class="sd">    optimization routine depends on the solution method. Currently, the interface to the </span>
+<span class="sd">    Simplex Vertex-Edge method (SVE) is implemented.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scanfunc</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scanfunc</span> <span class="o">=</span> <span class="n">scanfunc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>        
+        <span class="c1"># Methods&#39; attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">map2d</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># activate the polar/zenithal 2d mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mepdb</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># TODO: fill the mepdb per session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># solution method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># output data from the optimization method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Initial guess&#39; radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Xmapped</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Optimizer Object</span>
+
+<div class="viewcode-block" id="Tracker.track"><a class="viewcode-back" href="../../meptracker.html#meptracker.tracker.Tracker.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">map2d</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find an optimal (maximum) MEP by probing a MEP function</span>
+<span class="sd">        through an optimal 2D or 3D path. An initial guess is required.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x0 : `list` [ `float` ]</span>
+<span class="sd">            Initial guess at the n-dimensional solution vector.</span>
+
+<span class="sd">        method : {&#39;sve&#39;}</span>
+<span class="sd">            Optimization method.</span>
+
+<span class="sd">        map2d: `bool`, default False</span>
+<span class="sd">            If `True`, maps the 3D position vector into a 2D space using a </span>
+<span class="sd">            polar/zenithal projection. The optimization process then proceeds </span>
+<span class="sd">            along a bi-dimensional space.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments passed to the solution method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results: `dict`</span>
+<span class="sd">            Output data from the optimization method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">map2d</span> <span class="o">=</span> <span class="n">map2d</span>
+        <span class="c1"># TODO: if x0 is not provided, call scanfunc to get an initial x</span>
+
+        <span class="c1"># Polar mapping</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">map2d</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x0</span>
+            <span class="c1"># Convert to spherical coordinates</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> 
+            <span class="n">azim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="c1"># θ</span>
+            <span class="n">incl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="c1"># φ</span>
+            <span class="c1"># Apply a polar projection</span>
+            <span class="n">xc</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">incl</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azim</span><span class="p">)</span>
+            <span class="n">yc</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">incl</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azim</span><span class="p">)</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;sve&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tracker: only the sve method is currently accepted&#39;</span><span class="p">)</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">sve</span> <span class="k">import</span> <span class="n">Sve</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Can&#39;t execute the tracker. Please install the sve package.&quot;</span><span class="p">)</span>
+                <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">sve_init_args</span> <span class="o">=</span> <span class="n">Sve</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+            <span class="n">kwargs_init</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sve_init_args</span><span class="p">}</span>
+            <span class="c1"># Call sve constructor</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">opt</span> <span class="o">=</span> <span class="n">Sve</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_init</span><span class="p">)</span>
+            <span class="n">sve_iterate_args</span> <span class="o">=</span> <span class="n">Sve</span><span class="o">.</span><span class="n">iterate</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span>
+            <span class="n">kwargs_iterate</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sve_iterate_args</span><span class="p">}</span>
+            <span class="n">kwargs_iterate</span><span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scan</span>
+            <span class="n">kwargs_iterate</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x0</span>
+            <span class="c1"># Call sve.iterate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_iterate</span><span class="p">)</span>
+            <span class="c1"># Process the output</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">map2d</span><span class="p">:</span>
+                <span class="n">incl1</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span>
+                <span class="n">azim1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Xmapped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azim1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incl1</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azim1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incl1</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incl1</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span>                
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>            </div>
+
+    <span class="k">def</span> <span class="nf">_scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">*</span><span class="n">coef</span><span class="p">):</span>
+        <span class="c1"># Intermediate callback function </span>
+        <span class="c1"># Call scanfunc with optional modified arguments</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">map2d</span><span class="p">:</span>
+            <span class="c1"># transform the current X guess into a two coordinates using a polar projection</span>
+            <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">incl1</span> <span class="o">=</span> <span class="p">((</span><span class="n">xc</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yc</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span>
+            <span class="n">azim1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">yc</span><span class="p">,</span> <span class="n">xc</span><span class="p">)</span>
+            <span class="n">X_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azim1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incl1</span><span class="p">)</span>
+            <span class="n">Y_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azim1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">incl1</span><span class="p">)</span>
+            <span class="n">Z_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">incl1</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="n">X_</span><span class="p">,</span> <span class="n">Y_</span><span class="p">,</span> <span class="n">Z_</span><span class="p">]</span>
+            <span class="c1"># Need to store all mapped probes?</span>
+            <span class="c1"># self.map2d_3darray[0] += [X_]</span>
+            <span class="c1"># self.map2d_3darray[1] += [Y_]</span>
+            <span class="c1"># self.map2d_3darray[2] += [Y_]</span>
+
+        <span class="c1"># Call the external scan function to probe the MEPs at position X</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scanfunc</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># TODO: Saves the response to mepdb        </span>
+        <span class="k">return</span> <span class="n">f</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Eduardo Werley.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
