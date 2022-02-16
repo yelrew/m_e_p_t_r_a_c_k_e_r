@@ -180,7 +180,7 @@ by probing the electromyography at optimal stimulation positions. The scanner fu
 should return the MEP value probed at the specific coordinates passed as input arguments each iteration.</p>
 <p>In this <a class="reference external" href="https://github.com/yelrew/meptracker/blob/master/meptracker/tests/test_tracker_offline_3D.py">example</a>,
 <code class="docutils literal notranslate"><span class="pre">scanfunc</span></code> is a <a class="reference external" href="https://github.com/yelrew/meptracker/blob/master/meptracker/tests/test_tracker_offline_scanfunc.py">5th-degree polynomial</a>
-in three variables previouly fitted from an offline experiment.
+in three variables previously fitted from an offline experiment.
 The optimal stimulation path is found using the <a class="reference external" href="https://github.com/yelrew/sve">sve</a> method.</p>
 <div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">meptracker</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -224,6 +224,10 @@ The optimal stimulation path is found using the <a class="reference external" hr
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>If <code class="docutils literal notranslate"><span class="pre">map2D</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, mepTracker will map the 3D input into a 2D polar projection.
+The bi-dimensional optimizer output will be converted back to 3D by assuming a fixed radius from the original guess.
+See the <a class="reference external" href="https://github.com/yelrew/meptracker/blob/master/meptracker/tests/test_tracker_offline_2D.py">test_tracker_offline_2D</a>
+test case for more details.</p>
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
