@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>meptracker package &mdash; meptracker 1.0.0 documentation</title>
+  <title>meptracker package &mdash; meptracker 1.0.1 documentation</title>
   
 
   
@@ -211,6 +211,13 @@ along a bi-dimensional space.</li>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When the 2D mapping is enabled (<code class="docutils literal notranslate"><span class="pre">map2d</span></code> = <cite>True</cite>), the reference radius
+of the polar projection is taken from the initial guess. Once new 2D probe
+points are chosen by the optimization method, they are converted back to the
+3D space using the reference radius.</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -254,7 +261,7 @@ along a bi-dimensional space.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0',
+            VERSION:'1.0.1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

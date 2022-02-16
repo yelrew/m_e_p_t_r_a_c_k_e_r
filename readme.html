@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mepTracker &mdash; meptracker 1.0.0 documentation</title>
+  <title>mepTracker &mdash; meptracker 1.0.1 documentation</title>
   
 
   
@@ -81,6 +81,7 @@
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">mepTracker</a><ul>
 <li><a class="reference internal" href="#install">Install</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 </ul>
 </li>
@@ -150,31 +151,87 @@
             
   <div class="section" id="meptracker">
 <h1>mepTracker<a class="headerlink" href="#meptracker" title="Permalink to this headline">¶</a></h1>
-<p>mepTracker is a package for tracking and finding optimal Motor-Evoked Potential (MEPs).
-By starting with an initial guess, it seeks to determine a path to the region of maximum
-MEP by reading the coil responses along an optimized path in a 2D or 3D space.</p>
-<p>Currently an interface to the Simplex vertex-edge optimization method (sve) is av available.
-The <em>sve</em> package is required.
-See the <a class="reference external" href="https://github.com/yelrew/sve">SVE page</a> for more information.</p>
 <ul class="simple">
-<li><strong>Source:</strong> <a class="reference external" href="https://github.com/yelrew/meptracker">https://github.com/yelrew/meptracker</a></li>
 <li><strong>Documentation:</strong> <a class="reference external" href="https://yelrew.github.io/m_e_p_t_r_a_c_k_e_r">https://yelrew.github.io/m_e_p_t_r_a_c_k_e_r</a></li>
+<li><strong>Source:</strong> <a class="reference external" href="https://github.com/yelrew/meptracker">https://github.com/yelrew/meptracker</a></li>
+<li><strong>Bug reports:</strong> <a class="reference external" href="https://github.com/yelrew/meptracker/issues">https://github.com/yelrew/meptracker/issues</a></li>
 </ul>
+<p>mepTracker is a package for tracking and finding optimal Motor-Evoked Potential (MEPs).
+By starting with an initial guess, a path to the region of maximum MEP is determined by
+reading the coil responses along an optimized path in a 2D or 3D space.</p>
+<p>Currently, an interface to the Simplex vertex-edge optimization method (sve) is available.
+The <cite>sve</cite> package is required.
+See the <a class="reference external" href="https://github.com/yelrew/sve">SVE page</a> for more information.</p>
 <div class="section" id="install">
 <h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
-<p>Install the latest version of mepTracker</p>
+<p>The latest version of mepTracker can be installed using pip:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install --user -U git+ssh://git@github.com/yelrew/meptracker
 </pre></div>
 </div>
-<p>or</p>
+<p>or directly from the sources:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/yelrew/meptracker.git &amp;&amp; cd meptracker &amp;&amp; pip install -e .
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>The basic mepTracker usage is for determining a 3D path to the region of maximum MEP amplitude
+by probing the electromyography at optimal stimulation positions. The scanner function (<code class="docutils literal notranslate"><span class="pre">scanfunc</span></code>)
+should return the MEP value probed at the specific coordinates passed as input arguments each iteration.</p>
+<p>In this <a class="reference external" href="https://github.com/yelrew/meptracker/blob/master/meptracker/tests/test_tracker_offline_3D.py">example</a>,
+<code class="docutils literal notranslate"><span class="pre">scanfunc</span></code> is a <a class="reference external" href="https://github.com/yelrew/meptracker/blob/master/meptracker/tests/test_tracker_offline_scanfunc.py">5th-degree polynomial</a>
+in three variables previouly fitted from an offline experiment.
+The optimal stimulation path is found using the <a class="reference external" href="https://github.com/yelrew/sve">sve</a> method.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">meptracker</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">meptracker.tests.test_tracker_offline_scanfunc</span> <span class="k">import</span> <span class="n">scanfunc</span> <span class="c1"># External scanner function</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initial guess and parameters for the sve optimizer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">50.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">]</span> <span class="c1"># initial guess (average x,y,z from fitted data, in mm)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rMin</span> <span class="o">=</span> <span class="mf">0.0001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rIni</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rMax</span> <span class="o">=</span> <span class="mf">116.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stop</span> <span class="o">=</span> <span class="mi">10</span><span class="o">*</span><span class="n">rMin</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create the tracker object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tracker</span> <span class="o">=</span> <span class="n">meptracker</span><span class="o">.</span><span class="n">Tracker</span><span class="p">(</span><span class="n">scanfunc</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Find the optimal x (the tolerance is the maximum function mismatch)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;sve&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;POS&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="n">rIni</span><span class="o">=</span><span class="n">rIni</span><span class="p">,</span> <span class="n">rMin</span><span class="o">=</span><span class="n">rMin</span><span class="p">,</span> <span class="n">rMax</span><span class="o">=</span><span class="n">rMax</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>              <span class="n">stop_if_dFx_lt_tol</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol_dfx</span> <span class="o">=</span> <span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">Fx</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">nit</span><span class="p">,</span> <span class="n">nev</span><span class="p">,</span> <span class="n">maxit</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">**********&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">test_tracker_offline</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Perform a 3D MEP optimization considering the scanner function &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;as a fitting function obtained from offline MEP data.&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Problem dimension: &quot;</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Method used: sve</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simplex probe points: &quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Results:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Convergence in&#39;</span><span class="p">,</span> <span class="n">nit</span><span class="p">,</span> <span class="s1">&#39;iterations</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Summary of the iterative process</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">nit</span><span class="p">,</span> <span class="s1">&#39;iterations&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">nev</span><span class="p">,</span> <span class="s1">&#39;function evaluations&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:^5}{:^12}{:^12}{:^12}{:^12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;it&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;x3&#39;</span><span class="p">,</span> <span class="s1">&#39;f(x*)&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmtr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:^5}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:^12.5}</span><span class="s1">&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="n">fmtr</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">Fx</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="n">nit</span><span class="o">+</span><span class="mi">1</span><span class="p">)]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p>Neuromat and the mepTracker Developer.
-Eduardo Werley S. Ângelos &lt;<a class="reference external" href="mailto:ew&#46;angelos&#37;&#52;&#48;ieee&#46;org">ew<span>&#46;</span>angelos<span>&#64;</span>ieee<span>&#46;</span>org</a>&gt;</p>
+<div class="line-block">
+<div class="line">Neuromat and the mepTracker Developers.</div>
+<div class="line">Eduardo Werley &lt;<a class="reference external" href="mailto:ew&#46;angelos&#37;&#52;&#48;ieee&#46;org">ew<span>&#46;</span>angelos<span>&#64;</span>ieee<span>&#46;</span>org</a>&gt;</div>
+<div class="line">Jorge Stolfi &lt;<a class="reference external" href="mailto:stolfi&#37;&#52;&#48;ic&#46;unicamp&#46;br">stolfi<span>&#64;</span>ic<span>&#46;</span>unicamp<span>&#46;</span>br</a>&gt;</div>
+</div>
 </div>
 </div>
 
@@ -211,7 +268,7 @@ Eduardo Werley S. Ângelos &lt;<a class="reference external" href="mailto:ew&#46
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0',
+            VERSION:'1.0.1',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
